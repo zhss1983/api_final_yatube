@@ -1,21 +1,11 @@
-from rest_framework import routers
+from rest_framework import permissions
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
-
-from api.views import CommentViewSet, GroupViewSet, PostViewSet
-
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 from django.conf.urls import url
-
-router = routers.DefaultRouter()
-router.register(r'comments', CommentViewSet, basename='comments')
-router.register(r'groups', GroupViewSet, basename='groups')
-router.register(r'posts', PostViewSet, basename='posts')
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),

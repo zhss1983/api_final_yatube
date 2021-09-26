@@ -13,7 +13,7 @@ class PostSerializer(ModelSerializer):
 
 
 class CommentSerializer(ModelSerializer):
-    author = SlugRelatedField(read_only=True, slug_field='username')
+    author = SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -27,7 +27,9 @@ class GroupSerializer(ModelSerializer):
 
 class FollowSerializer(ModelSerializer):
     user = SlugRelatedField(slug_field='username', read_only=True)
-    following = SlugRelatedField(slug_field='username', queryset=User.objects.all())
+    following = SlugRelatedField(
+        slug_field='username', queryset=User.objects.all()
+    )
 
     class Meta:
         fields = '__all__'
@@ -37,7 +39,7 @@ class FollowSerializer(ModelSerializer):
         user = self.context['request'].user
         not_user = value != user
         not_exist = not user.follower.filter(following=value).exists()
-        if not_user and not_exist:
+        if value != user and not user.follower.filter(following=value).exists():
             return value
         raise ValidationError(
                 'Отсутствует обязательное поле в теле запроса или оно не '
