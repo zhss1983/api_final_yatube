@@ -1,11 +1,10 @@
-from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
+from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import ModelSerializer, SlugRelatedField
+
+from posts.models import Comment, Group, Post, Follow, User
 
 
-from posts.models import Comment, Post
-
-
-class PostSerializer(serializers.ModelSerializer):
+class PostSerializer(ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
@@ -13,11 +12,34 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username'
-    )
+class CommentSerializer(ModelSerializer):
+    author = SlugRelatedField(read_only=True, slug_field='username')
 
     class Meta:
         fields = '__all__'
         model = Comment
+        read_only_fields = ('post',)
+
+class GroupSerializer(ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Group
+
+class FollowSerializer(ModelSerializer):
+    user = SlugRelatedField(slug_field='username', read_only=True)
+    following = SlugRelatedField(slug_field='username', queryset=User.objects.all())
+
+    class Meta:
+        fields = '__all__'
+        model = Follow
+
+    def validate_following(self, value):
+        user = self.context['request'].user
+        not_user = value != user
+        not_exist = not user.follower.filter(following=value).exists()
+        if not_user and not_exist:
+            return value
+        raise ValidationError(
+                'Отсутствует обязательное поле в теле запроса или оно не '
+                'соответствует требованиям'
+              )
