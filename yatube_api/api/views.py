@@ -10,7 +10,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .permissions import IsAuthorOrAnyReadOnly
 from .serializers import (
-    CommentAuthorSerializer, FollowSerializer, GroupSerializer, PostAuthorSerializer)
+    CommentAuthorSerializer, FollowSerializer,
+    GroupSerializer, PostAuthorSerializer
+)
 from posts.models import Follow, Group, Post
 
 
