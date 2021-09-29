@@ -18,6 +18,7 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('pub_date', 'group')
     empty_value_display = EMPTY
 
+
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('pk', 'text', 'created', 'author')
     search_fields = ('text',)
