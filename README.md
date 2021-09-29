@@ -47,10 +47,17 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Выполнить миграции:
+Перейти в подкаталог yatube_api и выполнить миграции:
 
 ```
+cd yatube_api
 python manage.py migrate
+```
+
+Создать администратора (суперпользователя) БД:
+
+```
+python manage.py createsuperuser
 ```
 
 Запустить проект:

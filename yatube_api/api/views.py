@@ -17,33 +17,32 @@ from posts.models import Follow, Group, Post
 
 
 class BaseViewSet(ModelViewSet):
-    permission_classes = (IsAuthorOrAnyReadOnly,)
+    permission_classes = (AllowAny, IsAuthorOrAnyReadOnly)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
 
 class CommentViewSet(BaseViewSet):
-    ordering_fields = ('created', )
     serializer_class = CommentAuthorSerializer
 
-    def get_post(self):
+    def __get_post(self):
         post_id = self.kwargs.get('post_id')
         return get_object_or_404(Post, pk=post_id)
 
     def perform_create(self, serializer):
-        post = self.get_post()
+        post = self.__get_post()
         serializer.validated_data['post'] = post
         super().perform_create(serializer)
 
     def get_queryset(self):
-        post = self.get_post()
+        post = self.__get_post()
         return post.comments
 
 
 class PostViewSet(BaseViewSet):
     pagination_class = LimitOffsetPagination
-    ordering_fields = ('bpub_date', )
+    ordering_fields = ('pub_date', )
     serializer_class = PostAuthorSerializer
     queryset = Post.objects.all()
 

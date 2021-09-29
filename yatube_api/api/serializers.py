@@ -51,6 +51,6 @@ class FollowSerializer(ModelSerializer):
         )
 
     def validate_following(self, value):
-        if value != self.context['request'].user:
-            return value
-        raise ValidationError(VALIDATION_ERROR_MESSAGE)
+        if value == self.context['request'].user:
+            raise ValidationError(VALIDATION_ERROR_MESSAGE)
+        return value
